@@ -1,0 +1,172 @@
+body {
+    background-color: #F2EFEB;
+}
+
+input {
+    vertical-align:middle; 
+}
+
+.time-input {
+    width: 50px;
+}
+
+.time-input-min {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.name-input {
+    width: 250px;
+}
+
+.task-text-area {
+    white-space: pre-line;
+}
+
+.block {
+    padding: 10px 0px 10px 5px;
+}
+
+.padding-section {
+    background-color: white;
+    border-radius: .25rem;
+    padding: 10px;
+    margin: 10px;
+}
+
+.flex-block {
+    display: flex;
+}
+
+.grid-block {
+    display: grid;
+}
+
+.btn {
+    text-align: center;
+    margin: 5px;
+    padding: 2px 7px 2px 7px;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.normal-btn {
+    color: white;
+    background-color: #BFBDBA;
+    border-color: #BFBDBA;
+}
+
+.primary-btn {
+    color: white;
+    background-color: #594C3C;
+    border-color: #594C3C;
+}
+
+.alert-btn {
+    background-color: #8C4A0F;
+    color: white;
+    border-color: #8C4A0F;
+}
+
+.normal-label {
+    color: white;
+    background-color: #BFBDBA;
+    text-align: center;
+    padding: 2px 7px 2px 7px;
+    border-radius: .25em;
+    font-weight: bold;
+    font-size: small;
+}
+
+.time-btn {
+    border: none;
+    background-color: white;
+}
+
+.tether-symbol {
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input,
+textarea,
+select {
+    padding: 5px;
+    margin: 5px;
+}
+
+h4 {
+    margin: 5px;
+}
+
+.weekday-task-container {
+    max-width: 400px;
+    max-height: 200px;
+    float: right;
+    margin-right: 10px;
+}
+
+#alert-icon {
+    font-size: x-large;
+    color: white;
+}
+
+#accordion-wrapper {
+    width: 40px;
+    height: 35px;
+    background-color: rgb(238, 28, 36);
+    border-radius: .8em;
+    transition: 0.3s;
+    text-align: center;
+}
+
+#accordion-wrapper:hover {
+    opacity: 0.5;
+}
+
+#accordion-wrapper li,
+#accordion-wrapper h4 {
+    height: 0;
+    display: none;
+}
+
+#accordion-trigger {
+    display: none;
+}
+
+#accordion-trigger:checked ~ label #accordion-wrapper {
+    width: 300px;
+    height: 100px;
+    opacity: 0.7;
+    padding: 5px;
+
+}
+
+#accordion-trigger:checked ~ label #accordion-wrapper li {
+    height: 30px;
+    display: list-item;
+    color: white;
+}
+
+#accordion-trigger:checked ~ label #accordion-wrapper h4 {
+    height: 20px;
+    display: block;
+}
+
+#accordion-trigger:checked ~ label #accordion-wrapper #alert-icon {
+    float: right;
+    margin-right: 10px;
+}

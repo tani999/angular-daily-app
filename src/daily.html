@@ -1,0 +1,160 @@
+<!doctype html>
+<html ng-app="myNippo">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+<script src="./defaultSettings.js"></script>
+<script src="./daily.js"></script>
+<link rel="stylesheet" href="daily.css">
+</head>
+<body>
+  <div ng-controller="myController as myCtrl">
+    <div class="weekday-task-container" ng-if="0 < weekDayTasks.length">
+        <input type="checkbox" id="accordion-trigger">
+        <label for="accordion-trigger">
+            <div id="accordion-wrapper">
+                <span id="alert-icon">!</span>
+                <h4>曜日タスク</h4>
+                <li ng-repeat="task in weekDayTasks" class="weekday-tasks">
+                    {{task.name}}
+                </li>
+            </div>
+        </label>
+    </div>
+    <div ng-if="isEdit">
+      <button class="btn primary-btn" ng-click="myCtrl.switchDisplayWithAlert()">確認</button>
+      <button class="btn normal-btn" ng-click="myCtrl.switchDisplay()">無視して確認</button>
+    </div>
+    <div ng-if="!isEdit">
+      <button class="btn primary-btn" ng-click="myCtrl.switchDisplay()">編集</button>
+    </div>
+    <div ng-show="isEdit">
+      <div class="padding-section">
+          <div>
+              <span>勤務時間: {{workingHours}}H</span>
+              <span ng-if="workingMinutes">{{workingMinutes}}m</span>
+          </div>
+          <div>
+              <span>作業時間: {{executionHour}}</span><span ng-if="executionMinute && executionMinute == 30">.5</span>H<span ng-if="executionMinute && executionMinute != 30">{{executionMinute}}m</span>
+          </div>
+      </div>
+
+      <div class="padding-section">
+        <h4>勤務時間</h4>
+        <div class="flex-block">
+             <div class="flex-block">
+                  <span class="grid-block">
+                      <button class="time-btn" ng-click="myCtrl.incStartHour()">△</button>
+                      <input id="startHourInput" class="time-input-min" type="number" max="23" ng-model="startHour" readonly />
+                      <button class="time-btn" ng-click="myCtrl.decStartHour()">▽</button>
+                  </span>
+                  <span class="grid-block">
+                      <div></div>
+                      <div class="tether-symbol">:</div>
+                      <div></div>
+                  </span>
+                  <span class="grid-block">
+                      <button class="time-btn" ng-click="myCtrl.incStartMin()">△</button>
+                      <input id="startMinInput" class="time-input-min" ng-model="startMin" readonly />
+                      <button class="time-btn" ng-click="myCtrl.decStartMin()">▽</button>
+                  </span>
+              </div>
+              <span class="grid-block">
+                  <div></div>
+                  <div class="tether-symbol">～</div>
+                  <div></div>
+              </span>
+              <div class="flex-block">
+                  <span class="grid-block">
+                      <button class="time-btn" ng-click="myCtrl.incEndHour()">△</button>
+                      <input id="endHourInput" class="time-input-min" type="number" max="23" ng-model="endHour" readonly />
+                      <button class="time-btn" ng-click="myCtrl.decEndHour()">▽</button>
+                  </span>
+                  <span class="grid-block">
+                      <div></div>
+                      <div class="tether-symbol">:</div>
+                      <div></div>
+                  </span>
+                  <span class="grid-block">
+                      <button class="time-btn" ng-click="myCtrl.incEndMin()">△</button>
+                      <input id="endMinInput" class="time-input-min" ng-model="endMin" readonly />
+                      <button class="time-btn" ng-click="myCtrl.decEndMin()">▽</button>
+                  </span>
+              </div>
+          </div>
+      </div>
+      <div class="padding-section">
+          <h4>タスク一覧</h4>
+          <div ng-repeat="tValue in taskValues">
+            <div ng-if="myCtrl.hasTask(tValue)">
+              <label class="normal-label">{{tValue}}</label>
+              <div ng-repeat="task in tasks">
+                <div ng-if="task.value==tValue">
+                   <input type="checkbox" ng-model="task.checked">
+                   <input type="text" class="name-input" ng-model="task.name">
+                   <input type="number" step="0.1" class="time-input" ng-model="task.hour" ng-change="myCtrl.calcHoursFromTasks()">H
+                   <input type="number" class="time-input" ng-model="task.minute" ng-change="myCtrl.calcHoursFromTasks()">m
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn alert-btn" ng-click="myCtrl.deleteTasks()">削除</button>
+      </div>
+      <div class="padding-section">
+          <h4>タスク追加</h4>
+          <input ng-model="myCtrl.addTaskName" type="text" placeholder="タスク">
+          <input ng-model="myCtrl.addTaskHour" type="number" placeholder="時" class="time-input">H
+          <input ng-model="myCtrl.addTaskMinute" type="number" placeholder="分" class="time-input">m
+          <select ng-model="myCtrl.addTaskValue"  ng-options="value for value in taskValues" ng-required="true"></select>
+          <div>
+              <textarea ng-model="myCtrl.addTaskText" placeholder="追記事項(任意)"></textarea>
+          </div>
+          <button class="btn primary-btn" ng-click="myCtrl.onAdd()" >追加</button>
+      </div>
+      <div class="padding-section">
+          <h4>連絡事項</h4>
+          <input type="text" ng-model="transmissionMatter">
+      </div>
+      <div class="padding-section">
+        <button class="btn normal-btn" ng-click="myCtrl.downloadTasks()">ダウンロード</button>
+        <button class="btn normal-btn" ng-click="displayTasks = !displayTasks">defaultSettings表示切替</button>
+        <div ng-if="displayTasks">
+          <pre>
+const defaultTasks = {{tasks|json}};
+const defaultStartHour={{ startHour }};
+const defaultStartMin={{ startMin }};
+const defaultEndHour={{ endHour }};
+const defaultEndMin={{ endMin }};
+const defaultTaskValues={{taskValues}};
+const defaultTransmissionMatter = "{{transmissionMatter}}";
+const defaultAllWeekDayTasks = {{ allWeekDayTasks|json }};
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div ng-show="!isEdit" class="padding-section">
+      <label class="normal-label">日付: </label>
+      {{current | date: 'yyyy/MM/dd'}}<br/>
+      <hr/>
+      <h4>作業時間</h4>
+      <span>{{workingHours}}H</span><span ng-if="workingMinutes">{{workingMinutes}}m</span><br/>
+      <br/>
+      <h4>作業一覧</h4>
+      <div ng-repeat="tValue in taskValues">
+        <div ng-if="myCtrl.hasTask(tValue)">
+          {{tValue}}
+          <div ng-repeat="task in tasks">
+            <div ng-if="task.value==tValue">・{{task.name}}: <span ng-if="task.hour">{{task.hour}}<span ng-if="task.minute && task.minute == 30">.5</span>H</span><span ng-if="task.minute && task.minute != 30">{{ task.minute }}m</span>
+              <div ng-if="task.text" class="task-text-area">{{task.text}}
+              </div>
+            </div>
+          </div>
+          <br/>
+        </div>
+      </div>
+      <h4>連絡事項</h4>
+      {{transmissionMatter}}<br/>
+    </div>
+  </div>
+</body>
+</html>
