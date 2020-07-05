@@ -94,6 +94,7 @@
                    <input type="text" class="wide-input" ng-model="task.name">
                    <input type="number" step="0.1" class="time-input" ng-model="task.hour" ng-change="myCtrl.calcHoursFromTasks()">H
                    <input type="number" class="time-input" ng-model="task.minute" ng-change="myCtrl.calcHoursFromTasks()">m
+                   <textarea ng-model="task.inputText" ng-change="myCtrl.updateTaskText(task)"></textarea>
                 </div>
               </div>
             </div>
@@ -145,7 +146,8 @@ const defaultAllWeekDayTasks = {{ allWeekDayTasks|json }};
           {{tValue}}
           <div ng-repeat="task in tasks">
             <div ng-if="task.value==tValue">・{{task.name}}: <span ng-if="task.hour">{{task.hour}}<span ng-if="task.minute && task.minute == 30">.5</span>H</span><span ng-if="task.minute && task.minute != 30">{{ task.minute }}m</span>
-              <div ng-if="task.text" class="task-text-area">{{task.text}}
+              <div ng-repeat="tmp in task.textArray">
+                  &emsp;&emsp;{{tmp}}
               </div>
             </div>
           </div>
