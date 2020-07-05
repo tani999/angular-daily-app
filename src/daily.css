@@ -2,7 +2,7 @@ body {
     background-color: #F2EFEB;
 }
 
-input {
+input, textarea {
     vertical-align:middle; 
 }
 
@@ -17,8 +17,8 @@ input {
     text-align: center;
 }
 
-.name-input {
-    width: 250px;
+.wide-input {
+    width: 300px;
 }
 
 .task-text-area {
