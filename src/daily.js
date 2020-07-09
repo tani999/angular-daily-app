@@ -16,6 +16,7 @@ app.controller('myController', function($scope) {
     $scope.transmissionMatter = defaultTransmissionMatter;
     $scope.allWeekDayTasks = defaultAllWeekDayTasks;
     $scope.weekDayTasks = [];
+    $scope.nextTaskId = $scope.tasks.length;
 
     $scope.allWeekDayTasks.forEach(function(wdTask){
         if (wdTask.weekDay === $scope.current.getDay()) {
@@ -101,12 +102,15 @@ app.controller('myController', function($scope) {
           return;
         }
 
-        $scope.tasks.push({ name: this.addTaskName, hour: this.addTaskHour, minute: this.addTaskMinute, value: this.addTaskValue, text: this.addTaskText });
+        let textArray = createTaskTextArray(this.addTaskText);
+
+        $scope.tasks.push({ id: $scope.nextTaskId, name: this.addTaskName, hour: this.addTaskHour, minute: this.addTaskMinute, value: this.addTaskValue, inputText: this.addTaskText, textArray: textArray});
         this.addTaskName = "";
         this.addTaskHour = null;
         this.addTaskMinute = null;
         this.addTaskValue = null;
         this.addTaskText = "";
+        $scope.nextTaskId++;
 
         this.calcHoursFromTasks();
     }
@@ -196,6 +200,7 @@ app.controller('myController', function($scope) {
         calcHoursFromStoE();
     }
 
+    // H単位とm単位の時間を総計する
     let calcTotalTime = function(hour, minute) {
         let hourArray = ("" + hour).split('.');
         let totalMin = minute;
@@ -223,4 +228,22 @@ app.controller('myController', function($scope) {
         }
     }
 
+    // テキストエリアが更新された時に改行ごとの配列も併せて更新
+    this.updateTaskText = function(changedTask) {
+        $scope.tasks.forEach(function(task) {
+            if (task.id === changedTask.id) {
+                task.textArray = createTaskTextArray(task.inputText);
+                return;
+            }
+        })
+    }
+
+    // テキストエリアの入力値を改行ごとに配列へ変換
+    let createTaskTextArray = function(taskText) {
+        let textArray = [];
+        if (taskText) {
+            textArray = taskText.split(/\r\n|\r|\n/)
+        }
+        return textArray;
+    }
 });
